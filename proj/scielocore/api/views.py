@@ -3,6 +3,7 @@ from flask_restful import Api
 from marshmallow import ValidationError
 from scielocore.extensions import apispec
 from scielocore.api.resources import UserResource, UserList
+from scielocore.api.resources import DocumentResource
 from scielocore.api.schemas import UserSchema
 
 
@@ -13,12 +14,15 @@ api = Api(blueprint)
 api.add_resource(UserResource, "/users/<int:user_id>", endpoint="user_by_id")
 api.add_resource(UserList, "/users", endpoint="users")
 
+api.add_resource(DocumentResource, "/documents/<str:v3>", endpoint="document_by_v3")
+
 
 @blueprint.before_app_first_request
 def register_views():
     apispec.spec.components.schema("UserSchema", schema=UserSchema)
     apispec.spec.path(view=UserResource, app=current_app)
     apispec.spec.path(view=UserList, app=current_app)
+    apispec.spec.path(view=DocumentResource, app=current_app)
 
 
 @blueprint.errorhandler(ValidationError)
